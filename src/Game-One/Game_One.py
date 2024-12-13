@@ -1,4 +1,6 @@
 #Import statements are to enable the code to use the functions from the library
+import pygame.draw
+import pygame.mouse
 import pygame
 import sys
 import os
@@ -13,16 +15,17 @@ os.environ["SDL_VIDEO_CENTERED"] = "1"
 pygame.init()
 
 #Right way
-SCREENWIDTH = 1000
+SCREENWIDTH = 1500
 SCREENHEIGHT = 700
 SCREENSIZE = [SCREENWIDTH, SCREENHEIGHT]
 SCREEN = pygame.display.set_mode(SCREENSIZE)
 CENTRE = [(SCREENWIDTH/2) ,(SCREENHEIGHT/2)]
+MOUSEPOS = pygame.mouse.get_pos()
 
 #caption for the game
 pygame.display.set_caption("My first game in pygame")
 
-RADIUS = 20
+RADIUS = 10
 ZEROINTENSITY = 0
 MAXINTENSITY = 255
 
@@ -36,7 +39,7 @@ pygame.display.update(circlerect)
 #Draw a rectangle to collide with
 RECTWIDTH = 100
 RECTHEIGHT = 20
-NOOFWALLS = 100
+NOOFWALLS = 0
 
 
 
@@ -48,7 +51,7 @@ class Wall():
 walls = []
 
 for i in range(0 , NOOFWALLS):
-    wall = Wall(random.randint(0 ,SCREENHEIGHT ), random.randint(0,SCREENWIDTH))
+    wall = Wall(MOUSEPOS)
     walls.append(wall)
 
 
@@ -66,23 +69,31 @@ while running:
             pygame.quit()
             sys.exit()
         if (events.type == pygame.MOUSEBUTTONDOWN):
-            COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
-            #note- we have skipped the last parameter and by default, 0 is taken
-            circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
-            pygame.display.update(circlerect)
+            MOUSEPOS = MOUSEPOS
+            #pygame.draw.rect(SCREEN , GREY , MOUSEPOS , 0)
+
+        
        
 
 
     user_input = pygame.key.get_pressed()
     
-    if(user_input[pygame.K_UP]):
+    if(user_input[pygame.K_w ]):
         Y=Y-1 
-    elif(user_input[pygame.K_LEFT]):
+    elif(user_input[pygame.K_a ]):
         X=X-1
-    elif(user_input[pygame.K_RIGHT]):
+    elif(user_input[pygame.K_d ]):
         X=X+1
-    elif(user_input[pygame.K_DOWN]):
+    elif(user_input[pygame.K_s ]):
         Y=Y+1
+    elif(user_input[pygame.K_c]):
+        COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
+        circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
+        pygame.display.update(circlerect)
+    elif(user_input[pygame.K_ESCAPE]):
+        running = False
+
+
 
     SCREEN.fill(BLACK)
     circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
