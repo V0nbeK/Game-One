@@ -17,6 +17,7 @@ SCREENWIDTH = 1000
 SCREENHEIGHT = 700
 SCREENSIZE = [SCREENWIDTH, SCREENHEIGHT]
 SCREEN = pygame.display.set_mode(SCREENSIZE)
+CENTRE = [(SCREENWIDTH/2) ,(SCREENHEIGHT/2)]
 
 #caption for the game
 pygame.display.set_caption("My first game in pygame")
@@ -25,9 +26,9 @@ RADIUS = 20
 ZEROINTENSITY = 0
 MAXINTENSITY = 255
 
-X = 40
-Y = 40
-CIRCLEPOS = (X, Y)
+X = CENTRE[0]
+Y = CENTRE[1]
+CIRCLEPOS = CENTRE
 COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
 circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
 pygame.display.update(circlerect)
@@ -47,7 +48,7 @@ class Wall():
 walls = []
 
 for i in range(0 , NOOFWALLS):
-    wall = Wall(random.randint(0 ,SCREENHEIGHT),random.randint(0,SCREENWIDTH))
+    wall = Wall(random.randint(0 ,SCREENHEIGHT ), random.randint(0,SCREENWIDTH))
     walls.append(wall)
 
 
@@ -55,8 +56,11 @@ for i in range(0 , NOOFWALLS):
 
 
 BLACK = (0,0,0)
+GREY = (80,80,80)
 
-while True:
+running = True
+
+while running:
     for events in pygame.event.get():
         if events.type == pygame.QUIT:
             pygame.quit()
@@ -66,24 +70,29 @@ while True:
             #note- we have skipped the last parameter and by default, 0 is taken
             circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
             pygame.display.update(circlerect)
+       
+
 
     user_input = pygame.key.get_pressed()
     
     if(user_input[pygame.K_UP]):
-        Y=Y-1
-        if(SCREENHEIGHT):Y=0
+        Y=Y-1 
     elif(user_input[pygame.K_LEFT]):
         X=X-1
-        if(SCREENWIDTH):X=0
-    CIRCLEPOS = (X,Y)
+    elif(user_input[pygame.K_RIGHT]):
+        X=X+1
+    elif(user_input[pygame.K_DOWN]):
+        Y=Y+1
 
-#Loop to check for collisions against all of the walls
     SCREEN.fill(BLACK)
     circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
     
+    CIRCLEPOS = (X,Y)
+
     for i in range(0,NOOFWALLS):
         pygame.draw.rect(SCREEN, COLOR, walls[i].rect)
         if(circlerect.colliderect(walls[i].rect)):
             print("collision : " + str(i))
+            
     pygame.display.update()
 
