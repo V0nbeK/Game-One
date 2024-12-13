@@ -14,29 +14,34 @@ os.environ["SDL_VIDEO_CENTERED"] = "1"
 #initialize pygame
 pygame.init()
 
+pygame.display.set_caption("My first game in pygame")
+
 #Right way
 SCREENWIDTH = 1500
 SCREENHEIGHT = 700
 SCREENSIZE = [SCREENWIDTH, SCREENHEIGHT]
 SCREEN = pygame.display.set_mode(SCREENSIZE)
 CENTRE = [(SCREENWIDTH/2) ,(SCREENHEIGHT/2)]
+X = CENTRE[0]
+Y = CENTRE[1]
+CIRCLEPOS = CENTRE
 MOUSEPOS = pygame.mouse.get_pos()
+EDITMODE = False
 
-#caption for the game
-pygame.display.set_caption("My first game in pygame")
+RECTWIDTH = 100
+RECTHEIGHT = 20
+NOOFWALLS = 0
+RECTCOORD = [ X , Y , RECTWIDTH , RECTHEIGHT ]
+Rect1 = pygame.Rect(RECTCOORD)
 
 RADIUS = 10
 ZEROINTENSITY = 0
 MAXINTENSITY = 255
 
-X = CENTRE[0]
-Y = CENTRE[1]
-CIRCLEPOS = CENTRE
 COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
 circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
 pygame.display.update(circlerect)
 
-#Draw a rectangle to collide with
 RECTWIDTH = 100
 RECTHEIGHT = 20
 NOOFWALLS = 0
@@ -64,19 +69,20 @@ GREY = (80,80,80)
 running = True
 
 while running:
+    user_input = pygame.key.get_pressed()
     for events in pygame.event.get():
         if events.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if (events.type == pygame.MOUSEBUTTONDOWN):
-            MOUSEPOS = MOUSEPOS
-            #pygame.draw.rect(SCREEN , GREY , MOUSEPOS , 0)
-
-        
-       
-
-
-    user_input = pygame.key.get_pressed()
+        elif (events.type == pygame.MOUSEBUTTONDOWN) and EDITMODE == True:
+            pygame.draw.rect( SCREEN , GREY , Rect1 , 0 )
+        elif (user_input[pygame.K_e]):
+            if EDITMODE == True:
+                EDITMODE = False
+                print("editmode has been turned off")
+            else:
+                EDITMODE = True
+                print("editmode has been turned on")
     
     if(user_input[pygame.K_w ]):
         Y=Y-1 
@@ -92,6 +98,7 @@ while running:
         pygame.display.update(circlerect)
     elif(user_input[pygame.K_ESCAPE]):
         running = False
+        quit
 
 
 
