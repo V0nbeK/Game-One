@@ -46,15 +46,15 @@ RECTHEIGHT = 20
 NOOFWALLS = 0
 MAPSIZE = 0
 
+maps = [[],[]]
+walls = []
+
 def FullCircle(COLOR,LOCATION,RADIUS):
     pygame.draw.circle(SCREEN ,COLOR ,LOCATION , RADIUS , 0)
 
 class Wall():
     def __init__(self , POSITION):
         self.rect = pygame.Rect(POSITION,RECTWIDTH,RECTHEIGHT) 
-
-maps = []
-walls = []
 
 for i in range(0 , NOOFWALLS):
     wall = Wall(MOUSEPOS)
@@ -75,7 +75,7 @@ while running:
             sys.exit()
         elif (events.type == pygame.MOUSEBUTTONDOWN) and EDITMODE == True:
             FullCircle(GREY,MOUSEPOS,10)
-            maps.append(FullCircle(GREY,MOUSEPOS,10))
+            maps.append([GREY,MOUSEPOS,10])
             
         elif (user_input[pygame.K_e]):
             if EDITMODE == True:
@@ -113,7 +113,6 @@ while running:
 
     SCREEN.fill(BLACK)
     circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
-    maps
     CIRCLEPOS = (X,Y)
 
     for i in range(0,NOOFWALLS):
