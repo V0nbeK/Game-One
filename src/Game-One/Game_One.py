@@ -16,7 +16,6 @@ pygame.init()
 
 pygame.display.set_caption("My first game in pygame")
 
-#Right way
 SCREENWIDTH = 1500
 SCREENHEIGHT = 700
 SCREENSIZE = [SCREENWIDTH, SCREENHEIGHT]
@@ -45,21 +44,21 @@ pygame.display.update(circlerect)
 RECTWIDTH = 100
 RECTHEIGHT = 20
 NOOFWALLS = 0
+MAPSIZE = 0
 
-
+def FullCircle(COLOR,LOCATION,RADIUS):
+    pygame.draw.circle(SCREEN ,COLOR ,LOCATION , RADIUS , 0)
 
 class Wall():
-    def __init__(self , x ,y):
-        self.rect = pygame.Rect(x,y,RECTWIDTH,RECTHEIGHT) 
+    def __init__(self , POSITION):
+        self.rect = pygame.Rect(POSITION,RECTWIDTH,RECTHEIGHT) 
 
-
+maps = []
 walls = []
 
 for i in range(0 , NOOFWALLS):
     wall = Wall(MOUSEPOS)
     walls.append(wall)
-
-
 
 
 
@@ -75,7 +74,9 @@ while running:
             pygame.quit()
             sys.exit()
         elif (events.type == pygame.MOUSEBUTTONDOWN) and EDITMODE == True:
-            pygame.draw.rect( SCREEN , GREY , Rect1 , 0 )
+            FullCircle(GREY,MOUSEPOS,10)
+            maps.append(FullCircle(GREY,MOUSEPOS,10))
+            
         elif (user_input[pygame.K_e]):
             if EDITMODE == True:
                 EDITMODE = False
@@ -85,13 +86,21 @@ while running:
                 print("editmode has been turned on")
     
     if(user_input[pygame.K_w ]):
-        Y=Y-1 
+        Y = Y - 1 
+        if Y <= 0:
+            Y = Y + 1 
     elif(user_input[pygame.K_a ]):
-        X=X-1
+        X = X - 1
+        if X <= 0:
+            X = X + 1
     elif(user_input[pygame.K_d ]):
-        X=X+1
+        X = X + 1
+        if X >= SCREENWIDTH:
+            X = X - 1
     elif(user_input[pygame.K_s ]):
-        Y=Y+1
+        Y = Y + 1
+        if Y >= SCREENHEIGHT :
+            Y = Y - 1
     elif(user_input[pygame.K_c]):
         COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
         circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
@@ -104,7 +113,7 @@ while running:
 
     SCREEN.fill(BLACK)
     circlerect = pygame.draw.circle(SCREEN, COLOR, CIRCLEPOS, RADIUS)
-    
+    maps
     CIRCLEPOS = (X,Y)
 
     for i in range(0,NOOFWALLS):
