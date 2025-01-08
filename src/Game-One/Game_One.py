@@ -48,10 +48,8 @@ walls = []
 def FullCircle(COLOR,LOCATION,RADIUS):
     pygame.draw.circle(SCREEN ,COLOR ,LOCATION , RADIUS , 0)
 
-def FullRectangle(COLOR,Length,Width ,X ,Y):
-    RectCoord = [X, Y, Length, Width]
-    Rect1 = pygame.Rect(RectCoord)
-    pygame.draw.rect(SCREEN, COLOR, Rect1, 0)
+def FullRectangle(COLOR,Length,Width ,X,Y):
+    pygame.draw.rect(SCREEN, COLOR, X , Y, Length, Width, 0)
 
 def Movement(X , Y):
     if(user_input[pygame.K_w ]):
@@ -108,7 +106,8 @@ while running == True:
     for events in pygame.event.get():
         user_input = pygame.key.get_pressed()
         if (events.type == pygame.MOUSEBUTTONDOWN):
-            FullCircle(GREY,MOUSEPOS,40)
+            temp = FullRectangle(GREY,10,10,MOUSEPOS[0],MOUSEPOS[1])
+            walls.append(temp)
         elif(user_input[pygame.K_c]):
             COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
         elif(user_input[pygame.K_ESCAPE]):
