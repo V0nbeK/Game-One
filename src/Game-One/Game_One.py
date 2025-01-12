@@ -67,6 +67,7 @@ def PlayerSprite(COLOR, X , Y, RADIUS):
     pygame.draw.rect(SCREEN , TEAL , rect1 , 0 )
     RECTCOORD = (X , Y , RECTWIDTH , RECTHEIGHT)
     pygame.draw.rect(SCREEN , PLAYERCOLOR , rect1 , 0 )
+    return rect1
 
 def FullCircle(COLOR,LOCATION,RADIUS):
     pygame.draw.circle(SCREEN ,COLOR ,LOCATION , RADIUS , 0)
@@ -80,7 +81,7 @@ def FullRectangle(COLOR, RECTHEIGHT , RECTWIDTH , X , Y ):
 
 def Movement(X , Y):
     if (user_input[pygame.K_w ]):
-        Y = Y - 100 
+        Y = Y - 50 
         if Y <= 0:
             Y = SCREENHEIGHT  
     elif(user_input[pygame.K_a ]):
@@ -168,7 +169,7 @@ while running == True:
             MOVE = False
         else:
             MOVE = True
-
+            COLLISION = False
     COUNT = COUNT + 1
     if COUNT >= 30:
         if (COUNT % 30) == 0:

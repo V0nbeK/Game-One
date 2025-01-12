@@ -24,7 +24,7 @@ CENTRE = [(SCREENWIDTH/2) ,(SCREENHEIGHT/2)]
 
 
 PLAYERX = CENTRE[0]
-PLAYERY = CENTRE[1]
+PLAYERY = 0
 CIRCLEPOS = CENTRE
 
 COLLISION = False
@@ -55,18 +55,8 @@ COINS = []
 maps = []
 walls = []
 
-def PlayerSprite(COLOR, X , Y, RADIUS):
-    RECTWIDTH = 30
-    RECTHEIGHT = 10
-    RECTCOORD = (X , Y + 5 , RECTWIDTH , RECTHEIGHT)
-    rect1 = pygame.Rect(RECTCOORD)
-    POS = ( X + 40 , Y )
-    FullCircle( COLOR , POS , RADIUS)
-    POS = ( X - 10 , Y )
-    FullCircle( COLOR , POS , RADIUS)
-    pygame.draw.rect(SCREEN , TEAL , rect1 , 0 )
-    RECTCOORD = (X , Y , RECTWIDTH , RECTHEIGHT)
-    pygame.draw.rect(SCREEN , PLAYERCOLOR , rect1 , 0 )
+
+        
 
 def FullCircle(COLOR,LOCATION,RADIUS):
     pygame.draw.circle(SCREEN ,COLOR ,LOCATION , RADIUS , 0)
@@ -107,10 +97,26 @@ def gravity(X ,Y):
     CIRCLEPOS = (X,Y)
     return CIRCLEPOS
 
-def SpawnObjectivePoint(X,Y):
-    pygame.draw.circle(SCREEN , ObjectiveGold ,X , Y , 30 , 0)
+class SpawnObjectivePoint:
+    def __init__(self,POS):
+        pygame.draw.circle(SCREEN , ObjectiveGold ,POS, 30 , 0)
 
-
+class PlayerSprite:
+    def __init__(self,COLOR,POS, RADIUS):
+        self.POS = POS
+        X = POS[0]
+        Y = POS[1]
+        RECTWIDTH = 30
+        RECTHEIGHT = 10
+        RECTCOORD = (X , Y + 5 , RECTWIDTH , RECTHEIGHT)
+        rect1 = pygame.Rect(RECTCOORD)
+        POS = ( X + 40 , Y )
+        FullCircle( COLOR , POS , RADIUS)
+        POS = ( X - 10 , Y )
+        FullCircle( COLOR , POS , RADIUS)
+        pygame.draw.rect(SCREEN , TEAL , rect1 , 0 )
+        RECTCOORD = (X , Y , RECTWIDTH , RECTHEIGHT)
+        pygame.draw.rect(SCREEN , PLAYERCOLOR , rect1 , 0 )
 
 class Wall():
     def __init__(self , x , y):
@@ -171,15 +177,15 @@ while running == True:
         CIRCLEPOS = Movement(CIRCLEPOS[0],CIRCLEPOS[1])
     if COLLISION == False:
         CIRCLEPOS = gravity(CIRCLEPOS[0],CIRCLEPOS[1])
-    PlayerSprite(PLAYERCOLOR , CIRCLEPOS[0] , CIRCLEPOS[1] , RADIUS)
+    PlayerSprite(PLAYERCOLOR ,CIRCLEPOS , RADIUS)
 
 
     for i in range(0,NOOFWALLS):
-        player = PlayerSprite(PLAYERCOLOR , CIRCLEPOS[0] , CIRCLEPOS[1] , RADIUS)
+        player = PlayerSprite(PLAYERCOLOR , CIRCLEPOS, RADIUS)
         centrewall = FullRectangle(GREY , 100 , 100 , CENTRE[0] , CENTRE[1])
-        if player.rect.colliderect(centrewall.rect):
+        if player.sprite.colliderect(centrewall.CENTER):
             print("collision : " + str(i))
-            COLLISION = True
+            COLLISION = True 
             MOVE = False
         else:
             MOVE = True
