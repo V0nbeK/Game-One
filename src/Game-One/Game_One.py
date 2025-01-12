@@ -1,4 +1,5 @@
 #Import statements are to enable the code to use the functions from the library
+from re import X
 import pygame
 import sys
 import os
@@ -22,9 +23,6 @@ SCREENHEIGHT = 800
 SCREENSIZE = [SCREENWIDTH, SCREENHEIGHT]
 SCREEN = pygame.display.set_mode(SCREENSIZE)
 CENTRE = [(SCREENWIDTH/2) ,(SCREENHEIGHT/2)]
-PLAYERX = CENTRE[0]
-PLAYERY = CENTRE[1]
-
 CIRCLEPOS = CENTRE
 
 COLLISION = False
@@ -32,14 +30,7 @@ COLLISION = False
 LEFT = 10
 TOP = 10
 
-RECTWIDTH = 100
-RECTHEIGHT = 100
-NOOFWALLS = 10
 RADIUS = 10
-
-RECTCOORD = (LEFT , TOP , RECTWIDTH , RECTHEIGHT)
-
-rect1 = pygame.Rect(RECTCOORD)
 
 ZEROINTENSITY = 0
 MAXINTENSITY = 255
@@ -57,8 +48,15 @@ COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSI
 walls = []
 
 #Setup map
-walls.append(wall(100, 100))
+def generate_walls(gapSize):
+    wallHeight = 100
+    xLocation = random.randint(100, SCREENWIDTH - 100)
+    yLocation = SCREENHEIGHT * 2 / 3
 
+    walls.append(pygame.Rect(0, yLocation, xLocation, wallHeight))
+    walls.append(pygame.Rect(xLocation + gapSize, yLocation, SCREENWIDTH, wallHeight))
+
+generate_walls(100)
 playerColour = RED
 
 def display(inputWalls, spriteX, spriteY, spriteColour):
