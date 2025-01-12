@@ -1,9 +1,10 @@
 #Import statements are to enable the code to use the functions from the library
-from tkinter import LEFT
 import pygame
 import sys
 import os
 import random
+
+from custom_classes import wall
 from pygame.locals import *
 
 #instructions to windows to center the game window in the center of
@@ -16,27 +17,28 @@ pygame.display.set_caption("My first game in pygame")
 clock = pygame.time.Clock()
 FPS = 30
 
-
 SCREENWIDTH = 1500
 SCREENHEIGHT = 800
 SCREENSIZE = [SCREENWIDTH, SCREENHEIGHT]
 SCREEN = pygame.display.set_mode(SCREENSIZE)
 CENTRE = [(SCREENWIDTH/2) ,(SCREENHEIGHT/2)]
-
-
 PLAYERX = CENTRE[0]
 PLAYERY = CENTRE[1]
+
 CIRCLEPOS = CENTRE
 
 COLLISION = False
 
 LEFT = 10
 TOP = 10
+
 RECTWIDTH = 100
 RECTHEIGHT = 100
 NOOFWALLS = 10
 RADIUS = 10
+
 RECTCOORD = (LEFT , TOP , RECTWIDTH , RECTHEIGHT)
+
 rect1 = pygame.Rect(RECTCOORD)
 
 ZEROINTENSITY = 0
@@ -47,15 +49,27 @@ COUNT = 0
 BLACK = (0,0,0)
 GREY = (80,80,80)
 ObjectiveGold = (83,69,22)
-PLAYERCOLOR = (255,0,0)
+RED = (255,0,0)
 TEAL = (00,80,80) 
-WHITE =( 255 , 255 , 255 )
+WHITE =(255,255,255)
 COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
 
-maps = []
 walls = []
 
-def PlayerSprite(COLOR, X , Y, RADIUS):
+#Setup map
+walls.append(wall(100, 100))
+
+playerColour = RED
+
+def display(inputWalls, spriteX, spriteY, spriteColour):
+    # draw all the walls
+    for i in walls:
+        pygame.draw.rect(SCREEN, GREY, i)
+
+    # draw sprite
+    player_sprite(spriteColour , spriteX , spriteY , RADIUS)
+
+def player_sprite(COLOR, X , Y, RADIUS):
     RECTWIDTH = 30
     RECTHEIGHT = 10
     RECTCOORD = (X , Y + 5 , RECTWIDTH , RECTHEIGHT)
@@ -66,7 +80,7 @@ def PlayerSprite(COLOR, X , Y, RADIUS):
     FullCircle( COLOR , POS , RADIUS)
     pygame.draw.rect(SCREEN , TEAL , rect1 , 0 )
     RECTCOORD = (X , Y , RECTWIDTH , RECTHEIGHT)
-    pygame.draw.rect(SCREEN , PLAYERCOLOR , rect1 , 0 )
+    pygame.draw.rect(SCREEN , COLOR , rect1 , 0 )
     return rect1
 
 def FullCircle(COLOR,LOCATION,RADIUS):
@@ -112,21 +126,13 @@ def SpawnObjectivePoint(X,Y):
     pygame.draw.circle(SCREEN , ObjectiveGold ,X , Y , 30 , 0)
 
 
-
-class Wall():
-    def __init__(self , x , y):
-        self.rect = pygame.Rect(RECTWIDTH,RECTHEIGHT,x,y) 
-
-for i in range(0 , NOOFWALLS):
-    wall = Wall(random.randint(0 , SCREENWIDTH) , random.randint(0 , SCREENHEIGHT))
-    walls.append(wall)
-
 MOVE = True
 running = False
 
-FullCircle(PLAYERCOLOR, CIRCLEPOS, RADIUS)
+FullCircle(RED, CIRCLEPOS, RADIUS)
 
 pygame.display.update()
+
 print("please press space to start the game")
 while running == False:
     SCREEN.fill(GREY)
@@ -140,48 +146,36 @@ while running == False:
     pygame.display.update()
 
 print("welcome to the game")
-
 while running == True:
-    SCREEN.fill(BLACK)
+    SCREEN.fill(TEAL)
     MOUSEPOS = pygame.mouse.get_pos()
     for events in pygame.event.get():
         user_input = pygame.key.get_pressed()
-        if (events.type == pygame.MOUSEBUTTONDOWN):
-            FullRectangle(GREY , 100 , 100 , MOUSEPOS[0] , MOUSEPOS[1])
-        elif(user_input[pygame.K_c]):
+        if(user_input[pygame.K_c]):
             COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
         elif(user_input[pygame.K_ESCAPE]):
             running = False
             quit
-
+    
     if MOVE == True:
         CIRCLEPOS = Movement(CIRCLEPOS[0],CIRCLEPOS[1])
     if COLLISION == False:
         CIRCLEPOS = gravity(CIRCLEPOS[0],CIRCLEPOS[1])
-    PlayerSprite(PLAYERCOLOR , CIRCLEPOS[0] , CIRCLEPOS[1] , RADIUS)
-
-
-    for i in range(0,NOOFWALLS):
-        circlerect = PlayerSprite(PLAYERCOLOR , CIRCLEPOS[0] , CIRCLEPOS[1] , RADIUS)
-        if(circlerect.colliderect(walls[i].rect)):
-            print("collision : " + str(i))
-            COLLISION = True
-            MOVE = False
-        else:
-            MOVE = True
-            COLLISION = False
+    
     COUNT = COUNT + 1
     if COUNT >= 30:
         if (COUNT % 30) == 0:
-            if PLAYERCOLOR == (255,0,0):
-                PLAYERCOLOR = (255,255,255)
+            if playerColour == RED:
+                playerColour = WHITE
             else:
-                PLAYERCOLOR = (255,0,0)
+                playerColour = RED
     elif (COUNT % 500) == 0:
         SpawnObjectivePoint(random.ranint(0,SCREENWIDTH),random.ranint(0,SCREENHEIGHT))
     elif COUNT >= 1000:
         COUNT ==0
     
+    display(walls, CIRCLEPOS[0], CIRCLEPOS[1], playerColour )    
+
     pygame.display.update()
     clock.tick(FPS)
 
