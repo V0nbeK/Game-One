@@ -1,11 +1,10 @@
 #Import statements are to enable the code to use the functions from the library
-from re import X
 import pygame
 import sys
 import os
 import random
 
-from custom_classes import wall
+
 from pygame.locals import *
 
 #instructions to windows to center the game window in the center of
@@ -14,7 +13,7 @@ os.environ["SDL_VIDEO_CENTERED"] = "1"
 #initialize pygame
 pygame.init()
 
-pygame.display.set_caption("My first game in pygame")
+pygame.display.set_caption("christmas decent")
 clock = pygame.time.Clock()
 FPS = 30
 
@@ -23,7 +22,7 @@ SCREENHEIGHT = 800
 SCREENSIZE = [SCREENWIDTH, SCREENHEIGHT]
 SCREEN = pygame.display.set_mode(SCREENSIZE)
 CENTRE = [(SCREENWIDTH/2) ,(SCREENHEIGHT/2)]
-CIRCLEPOS = CENTRE
+CIRCLEPOS = [CENTRE[0],CENTRE[1]-300]
 
 COLLISION = False
 
@@ -37,6 +36,7 @@ MAXINTENSITY = 255
 
 COUNT = 0
 
+
 BLACK = (0,0,0)
 GREY = (80,80,80)
 ObjectiveGold = (83,69,22)
@@ -45,13 +45,34 @@ TEAL = (00,80,80)
 WHITE =(255,255,255)
 COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
 
+SCORE = 0
+
+def points(Y , point):
+     if Y == SCREENHEIGHT: 
+        point = point + 1
+     else:
+        point = point
+     return point
+
 walls = []
 
 #Setup map
 def generate_walls(gapSize):
-    wallHeight = 100
+    wallHeight = 50
     xLocation = random.randint(100, SCREENWIDTH - 100)
     yLocation = SCREENHEIGHT * 2 / 3
+
+    walls.append(pygame.Rect(0, yLocation, xLocation, wallHeight))
+    walls.append(pygame.Rect(xLocation + gapSize, yLocation, SCREENWIDTH, wallHeight))
+
+    xLocation = random.randint(100, SCREENWIDTH - 100)
+    yLocation = SCREENHEIGHT * 1 / 3
+
+    walls.append(pygame.Rect(0, yLocation, xLocation, wallHeight))
+    walls.append(pygame.Rect(xLocation + gapSize, yLocation, SCREENWIDTH, wallHeight))
+
+    xLocation = random.randint(100, SCREENWIDTH - 100)
+    yLocation = SCREENHEIGHT * 0.95
 
     walls.append(pygame.Rect(0, yLocation, xLocation, wallHeight))
     walls.append(pygame.Rect(xLocation + gapSize, yLocation, SCREENWIDTH, wallHeight))
@@ -62,7 +83,7 @@ playerColour = RED
 def display(inputWalls, spriteX, spriteY, spriteColour):
     # draw all the walls
     for i in walls:
-        pygame.draw.rect(SCREEN, GREY, i)
+        pygame.draw.rect(SCREEN, COLOR, i)
 
     # draw sprite
     player_sprite(spriteColour , spriteX , spriteY , RADIUS)
@@ -91,21 +112,23 @@ def FullRectangle(COLOR, RECTHEIGHT , RECTWIDTH , X , Y ):
     rect1 = pygame.Rect(RECTCOORD)
     pygame.draw.rect(SCREEN, COLOR, rect1 , 0)
 
-def gravity(X ,Y):
-    Y = Y + 10
-    if Y < 0:
-        Y = SCREENHEIGHT
-    elif COLLISION == True:
-        MOVE == False
+GRAVITY = 10
+
+def gravity(X ,Y ):
+    Y = Y + GRAVITY
+    if Y >= SCREENHEIGHT :
+       global SCORE
+       SCORE = points(Y , SCORE)
+       Y = 0
     CIRCLEPOS = (X,Y)
     return CIRCLEPOS
 
-def Movement(X, Y):
+def Movement(X, Y ):
     existingX = X
     existingY = Y
 
     if (user_input[pygame.K_w ]):
-        Y = Y - 50 
+        Y = Y - 25 
         if Y <= 0:
             Y = SCREENHEIGHT 
             
@@ -122,7 +145,10 @@ def Movement(X, Y):
     if(user_input[pygame.K_s ]):
         Y = Y + 10
         if Y >= SCREENHEIGHT :
+            global SCORE
+            SCORE = points(Y , SCORE)
             Y = 0
+            
 
     finalLocation = gravity(X,Y)
 
@@ -141,9 +167,6 @@ def Movement(X, Y):
         
     return CIRCLEPOS
 
-
-
-MOVE = True
 running = False
 
 FullCircle(RED, CIRCLEPOS, RADIUS)
@@ -164,7 +187,7 @@ while running == False:
 
 print("welcome to the game")
 while running == True:
-    SCREEN.fill(TEAL)
+    SCREEN.fill(BLACK)
     
     for events in pygame.event.get():
         user_input = pygame.key.get_pressed()
@@ -172,6 +195,7 @@ while running == True:
             COLOR = (random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY), random.randint(ZEROINTENSITY, MAXINTENSITY))
         elif(user_input[pygame.K_ESCAPE]):
             running = False
+            print(SCORE)
             quit
    
     CIRCLEPOS = Movement(CIRCLEPOS[0],CIRCLEPOS[1])
@@ -190,4 +214,3 @@ while running == True:
 
     pygame.display.update()
     clock.tick(FPS)
-
