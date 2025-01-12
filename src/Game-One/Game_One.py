@@ -91,26 +91,6 @@ def FullRectangle(COLOR, RECTHEIGHT , RECTWIDTH , X , Y ):
     rect1 = pygame.Rect(RECTCOORD)
     pygame.draw.rect(SCREEN, COLOR, rect1 , 0)
 
-def Movement(X , Y):
-    if (user_input[pygame.K_w ]):
-        Y = Y - 50 
-        if Y <= 0:
-            Y = SCREENHEIGHT  
-    elif(user_input[pygame.K_a ]):
-        X = X - 10
-        if X <= 0:
-            X = 0
-    elif(user_input[pygame.K_d ]):
-        X = X + 10
-        if X >= SCREENWIDTH:
-            X = SCREENWIDTH
-    elif(user_input[pygame.K_s ]):
-        Y = Y + 10
-        if Y >= SCREENHEIGHT :
-            Y = 0  
-    CIRCLEPOS = (X,Y)
-    return CIRCLEPOS
-
 def gravity(X ,Y):
     Y = Y + 10
     if Y < 0:
@@ -120,8 +100,47 @@ def gravity(X ,Y):
     CIRCLEPOS = (X,Y)
     return CIRCLEPOS
 
-def SpawnObjectivePoint(X,Y):
-    pygame.draw.circle(SCREEN , ObjectiveGold ,X , Y , 30 , 0)
+def Movement(X, Y):
+    existingX = X
+    existingY = Y
+
+    if (user_input[pygame.K_w ]):
+        Y = Y - 50 
+        if Y <= 0:
+            Y = SCREENHEIGHT 
+            
+    if(user_input[pygame.K_a ]):
+        X = X - 10
+        if X <= 0:
+            X = 0
+    
+    if(user_input[pygame.K_d ]):
+        X = X + 10
+        if X >= SCREENWIDTH:
+            X = SCREENWIDTH
+            
+    if(user_input[pygame.K_s ]):
+        Y = Y + 10
+        if Y >= SCREENHEIGHT :
+            Y = 0
+
+    finalLocation = gravity(X,Y)
+
+    #Check collisions 
+    collided = False
+    newSprite = player_sprite(playerColour, finalLocation[0], finalLocation[1], RADIUS)
+    for wall in walls:
+        if (newSprite.colliderect(wall)):
+            collided = True
+            break
+
+    if (collided):
+        CIRCLEPOS = [existingX, existingY]
+    else:
+        CIRCLEPOS = finalLocation
+        
+    return CIRCLEPOS
+
 
 
 MOVE = True
@@ -134,7 +153,7 @@ pygame.display.update()
 print("please press space to start the game")
 while running == False:
     SCREEN.fill(GREY)
-    pygame.draw.circle(SCREEN , BLACK , CENTRE , 100 , 0)
+    pygame.draw.circle(SCREEN, BLACK, CENTRE, 100 , 0)
     for events in pygame.event.get():
         user_input = pygame.key.get_pressed()
         if (user_input[pygame.K_SPACE]):
@@ -146,7 +165,7 @@ while running == False:
 print("welcome to the game")
 while running == True:
     SCREEN.fill(TEAL)
-    MOUSEPOS = pygame.mouse.get_pos()
+    
     for events in pygame.event.get():
         user_input = pygame.key.get_pressed()
         if(user_input[pygame.K_c]):
@@ -154,12 +173,9 @@ while running == True:
         elif(user_input[pygame.K_ESCAPE]):
             running = False
             quit
-    
-    if MOVE == True:
-        CIRCLEPOS = Movement(CIRCLEPOS[0],CIRCLEPOS[1])
-    if COLLISION == False:
-        CIRCLEPOS = gravity(CIRCLEPOS[0],CIRCLEPOS[1])
-    
+   
+    CIRCLEPOS = Movement(CIRCLEPOS[0],CIRCLEPOS[1])
+     
     COUNT = COUNT + 1
     if COUNT >= 30:
         if (COUNT % 30) == 0:
@@ -167,8 +183,6 @@ while running == True:
                 playerColour = WHITE
             else:
                 playerColour = RED
-    elif (COUNT % 500) == 0:
-        SpawnObjectivePoint(random.ranint(0,SCREENWIDTH),random.ranint(0,SCREENHEIGHT))
     elif COUNT >= 1000:
         COUNT ==0
     
